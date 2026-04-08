@@ -3,4 +3,24 @@ name = "subhuti-cli"
 version = "0.1.0"
 edition = "2024"
 
+
 [dependencies]
+# 原有依赖
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+rusqlite = "0.29"
+thiserror = "1.0"
+anyhow = "1.0"
+tokio = { version = "1.0", features = ["full"] }
+once_cell = "1.19"
+chrono = { version = "0.4", features = ["serde"] }
+uuid = { version = "1.0", features = ["v4", "serde"] }
+reqwest = { version = "0.11", features = ["json", "rustls-tls"] }
+# 【新增】CLI 与终端可视化
+clap = { version = "4.5", features = ["derive"] }
+indicatif = "0.17"
+console = "0.15"
+colored = "2.1"
+dotenv = "0.15"
+async-trait = "0.1.89"
+dotenvy = "0.15.7"        # 👈 可选：方便管理环境变量

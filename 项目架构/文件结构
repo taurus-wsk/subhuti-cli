@@ -1,0 +1,98 @@
+subhuti-core/
+├── Cargo.toml                          # 项目依赖配置
+├── src/
+│   ├── main.rs                         # CLI 主入口
+│   ├── lib.rs                          # 核心库导出
+│   │
+│   ├── context/                        # 【核心】全局上下文管理中枢
+│   │   ├── mod.rs                      # 模块导出
+│   │   ├── hub.rs                      # 上下文中枢单例实现
+│   │   ├── models.rs                   # 核心数据结构（技能/快照/记录/上下文）
+│   │   ├── skill_registry.rs           # 统一技能注册表
+│   │   ├── state_manager.rs            # 执行状态/快照/断点续跑/回滚
+│   │   └── memory/                     # 记忆智能层（内嵌在上下文里）
+│   │       ├── mod.rs
+│   │       ├── repair_experience.rs    # 修复经验库
+│   │       ├── user_preference.rs      # 个人偏好库
+│   │       ├── template_library.rs     # 流程模板库
+│   │       └── execution_history.rs    # 执行历史库
+│   │
+│   ├── schedule/                       # 核心调度层
+│   │   ├── mod.rs
+│   │   ├── pipeline/                   # 流水线引擎
+│   │   │   ├── mod.rs
+│   │   │   ├── engine.rs               # 流水线执行引擎
+│   │   │   ├── models.rs               # Pipeline/Stage/Step 数据模型
+│   │   │   └── template_parser.rs      # 流水线配置模板解析
+│   │   └── task/                       # 任务分解层
+│   │       ├── mod.rs
+│   │       ├── decomposer.rs           # 任务分解器
+│   │       ├── models.rs               # Task/SubTask 数据模型
+│   │       └── tracker.rs              # 任务进度跟踪器
+│   │
+│   ├── agent/                          # AI执行层适配
+│   │   ├── mod.rs
+│   │   ├── langgraph_client.rs         # LangGraph Python 客户端
+│   │   └── llm_adapter.rs              # LLM 适配层
+│   │
+│   ├── diagnosis/                      # 错误诊断与修复引擎
+│   │   ├── mod.rs
+│   │   ├── classifier.rs               # 错误分类器
+│   │   ├── analyzer.rs                 # 根因分析器
+│   │   ├── repair_executor.rs          # 修复策略执行器
+│   │   ├── fallback.rs                 # 保底降级机制
+│   │   └── audit.rs                    # 错误审计日志
+│   │
+│   ├── plugin/                         # 插件管理体系
+│   │   ├── mod.rs
+│   │   ├── manager.rs                  # 插件管理器
+│   │   ├── interface.rs                # 插件核心接口定义
+│   │   ├── loader.rs                   # 插件加载器
+│   │   └── python_executor.rs          # Python脚本执行器（Bash调用）
+│   │
+│   ├── cli/                            # 命令行入口
+│   │   ├── mod.rs
+│   │   ├── commands.rs                 # 子命令定义（pipeline/task/plugin）
+│   │   └── render.rs                   # 终端轻量可视化渲染
+│   │
+│   ├── storage/                        # 本地存储引擎
+│   │   ├── mod.rs
+│   │   ├── sqlite.rs                   # SQLite 连接与操作
+│   │   ├── migrations.rs               # 数据库迁移
+│   │   └── dao/                        # 数据访问层
+│   │       ├── mod.rs
+│   │       ├── context_dao.rs
+│   │       ├── skill_dao.rs
+│   │       └── memory_dao.rs
+│   │
+│   └── utils/                          # 工具函数
+│       ├── mod.rs
+│       ├── json.rs                     # JSON 序列化/反序列化
+│       ├── bash.rs                     # Bash 命令执行封装
+│       └── yaml.rs                     # YAML 配置解析
+│
+├── plugins/                            # 插件目录（100%业务逻辑）
+│   ├── file_ops/                       # 基础文件操作插件
+│   │   ├── plugin.yaml                 # 插件元数据定义
+│   │   ├── src/                        # Rust 插件接口实现（可选）
+│   │   │   └── lib.rs
+│   │   └── scripts/                    # Python 业务脚本
+│   │       ├── skills.py               # 技能实现
+│   │       └── operators.py            # 操作原语
+│   │
+│   └── blender_3d/                     # Blender 3D 自动化插件（预留）
+│       ├── plugin.yaml
+│       └── scripts/
+│           ├── skills.py
+│           └── operators.py
+│
+├── templates/                          # 全局流水线模板库
+│   ├── go_project.yaml
+│   └── blender_render.yaml
+│
+├── .subhuti/                           # 运行时数据目录
+│   ├── subhuti.db                      # SQLite 数据库
+│   ├── snapshots/                      # 执行快照
+│   └── cache/                          # 缓存目录
+│
+└── README.md
