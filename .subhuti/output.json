@@ -1,0 +1,51 @@
+{
+  "name": "生产力自动化流水线",
+  "version": "1.0",
+  "ai_optimized": true,
+  "max_retries": 3,
+  "context": {
+    "user_input": "帮我构建项目,然后执行任务,最后完成",
+    "optimize_time": "2026-04-07 18:10:00",
+    "ai_version": "doubao-seed-2-0-lite"
+  },
+  "steps": [
+    {
+      "id": "step_1_build",
+      "name": "开始构建",
+      "desc": "初始化并构建",
+      "type": "command",
+      "command": "echo 开始构建",
+      "retry": 3,
+      "timeout": 10,
+      "on_fail": "diagnose_and_retry",
+      "on_success": "continue"
+    },
+    {
+      "id": "step_2_task",
+      "name": "执行任务",
+      "desc": "运行自动化脚本",
+      "type": "script",
+      "script": "echo 执行自动化任务",
+      "retry": 3,
+      "timeout": 15,
+      "on_fail": "diagnose_and_retry",
+      "on_success": "continue"
+    },
+    {
+      "id": "step_3_finish",
+      "name": "完成",
+      "desc": "结束任务",
+      "type": "command",
+      "command": "echo 任务完成",
+      "retry": 1,
+      "timeout": 5
+    }
+  ],
+  "report": {
+    "status": "pending",
+    "current_step": null,
+    "success_steps": [],
+    "failed_steps": [],
+    "logs": []
+  }
+}

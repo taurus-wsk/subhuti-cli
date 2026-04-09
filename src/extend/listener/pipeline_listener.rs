@@ -1,6 +1,6 @@
 use crate::core::agent::agent::AgentTaskStep;
 use crate::core::context::ContextHub;
-use crate::extend::Step;
+use crate::core::schedule::Step;
 
 pub trait PipelineListener: Send + Sync {
     fn on_start(&self, ctx: &ContextHub);

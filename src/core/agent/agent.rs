@@ -17,7 +17,7 @@ pub trait Agent: Send + Sync {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct AgentTaskStep {
     pub action: String,    // open_app / open_url / search / click / type
-    pub value: String,     // 参数
+    pub parameters: String,     // 参数
     pub desc: String,      // 描述
 }
 
@@ -65,7 +65,7 @@ impl AgentDecorator {
         // ==========================================
         for (_idx, step) in step_list.iter().enumerate() {
             loop {
-                sleep(Duration::from_secs(1));
+               
                 // 触发子步骤开始
                 ctx.listeners.iter().for_each(|l| l.on_agent_step_begin(step));
 
@@ -97,7 +97,7 @@ impl AgentDecorator {
                 }
             }
         }
-        sleep(Duration::from_secs(3));
+        sleep(Duration::from_secs(1));
         Ok("🎉 任务完成".to_string())
     }
 }

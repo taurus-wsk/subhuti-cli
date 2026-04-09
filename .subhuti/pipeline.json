@@ -1,0 +1,17 @@
+{
+  "name": "生产力自动化流水线",
+  "steps": [
+    {
+      "role": "ai",
+      "desc": "echo 开始构建"
+    },
+    {
+      "role": "ai",
+      "desc": "echo 执行自动化任务"
+    },
+    {
+      "role": "ai",
+      "desc": "echo 任务完成"
+    }
+  ]
+}

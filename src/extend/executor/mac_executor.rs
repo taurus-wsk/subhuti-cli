@@ -1,44 +1,24 @@
 use crate::core::agent::{AgentTaskStep, Executor};
 use crate::core::context::ContextHub;
 use anyhow::Result;
+use std::process::Command;
 
 pub struct MacExecutor;
 impl Executor for MacExecutor {
     fn execute(&self, step: &AgentTaskStep, _ctx: &ContextHub) -> Result<String> {
-        // std::fs::File::create(path)?;
-        match step.action.as_str() {
-            // 打开软件
-            "open_app" => {
-                println!("🚀 打开应用：{}", step.value);
-                std::process::Command::new("open")
-                    .arg("-a")
-                    .arg(&step.value)
-                    .spawn()?;
-            }
-
-            // 打开网址
-            "open_url" => {
-                println!("🌍 打开网址：{}", step.value);
-                std::process::Command::new("open")
-                    .arg(&step.value)
-                    .spawn()?;
-            }
-
-            // B站搜索
-            "search" => {
-                let url = format!(
-                    "https://search.bilibili.com/all?keyword={}",
-                    step.value
-                );
-                println!("🔍 B站搜索：{}", step.value);
-                std::process::Command::new("open")
-                    .arg(url)
-                    .spawn()?;
-            }
-
-            _ => anyhow::bail!("不支持的动作"),
-        }
-
-        Ok(format!("执行：{}", step.desc))
+        // let params = json!({ "value": step.parameters });
+        run_skill(&step.action, &step.parameters.to_string())
     }
+}
+pub fn run_skill(skill: &str, params: &str) -> anyhow::Result<String> {
+    // let params_str = serde_json::to_string(&params)?;
+
+    let output = Command::new("python3")
+        .arg("/.subhuti/mac-skills/run_skill.py") // 改成你自己的路径
+        .arg(skill)
+        .arg(params)
+        .output()?;
+
+    let result = String::from_utf8_lossy(&output.stdout).trim().to_string();
+    Ok(result)
 }

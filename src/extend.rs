@@ -1,10 +1,12 @@
-pub mod pipeline;
-
 pub mod executor;
- 
-mod listener;
 
-pub use pipeline::*;
+mod listener;
+// src/core.rs
+pub mod cli;
+pub mod agent;
+
 pub use executor::*;
- 
+
 pub use listener::*;
+
+pub use agent::*;

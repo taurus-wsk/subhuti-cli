@@ -1,12 +1,15 @@
-use subhuti_cli::extend::PipelineBuilder;
+use std::thread::sleep;
+use std::time::Duration;
+use subhuti_cli::core::schedule::PipelineBuilder;
 
 fn run_app() -> anyhow::Result<()> {
     // let mut pipeline = PipelineBuilder::from_config("pipeline.json")?;
 
-    let mut pipeline = PipelineBuilder::from_task("打开edge浏览器，到b站搜索，间谍过家家")?;
+    let mut pipeline = PipelineBuilder::from_task("打开edge浏览器，到b站搜索，攻壳机动队")?;
     pipeline.default();
     pipeline.run()?;
     println!("🎉 单元测试通过：流水线闭环完成");
+    sleep(Duration::from_secs(5));
     Ok(())
 }
 

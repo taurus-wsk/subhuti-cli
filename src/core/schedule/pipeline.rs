@@ -1,7 +1,7 @@
 use crate::core::context::{ContextHub, UserPipeline};
 
 use crate::core::agent::agent::AgentDecorator;
-use crate::core::agent::MacAgent;
+use crate::extend::agent::MacAgent;
 use crate::extend::{DefaultLogger, MacExecutor, PipelineListener};
 use anyhow::Result;
 use serde::Deserialize;
