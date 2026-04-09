@@ -14,7 +14,7 @@ pub fn run_skill(skill: &str, params: &str) -> anyhow::Result<String> {
     // let params_str = serde_json::to_string(&params)?;
 
     let output = Command::new("python3")
-        .arg("/.subhuti/mac-skills/run_skill.py") // 改成你自己的路径
+        .arg(".subhuti/mac-skills/run_skill.py") // 改成你自己的路径
         .arg(skill)
         .arg(params)
         .output()?;

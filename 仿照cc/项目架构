@@ -1,0 +1,380 @@
+ 单人版 Claude Code 完整架构设计
+我给你一套完全可落地、适合单人开发、具备工业级特性的架构，重点解决你关心的：项目记忆、流程编排、断点续跑、需求变更管理。
+一、核心架构图（Mermaid）
+状态层
+
+记忆层
+
+核心层
+
+自然语言任务
+
+分解任务
+
+生成步骤
+
+执行
+
+调用
+
+读写
+
+保存/恢复
+
+读写
+
+操作
+
+提交
+
+修改
+
+用户
+
+流程编排器
+Orchestrator
+
+规划层
+Planner
+
+任务队列
+TaskQueue
+
+执行层
+Executor
+
+技能库
+Skills
+
+项目记忆
+ProjectMemory
+
+会话记忆
+SessionMemory
+
+代码图谱
+CodeGraph
+
+检查点
+Checkpoint
+
+运行时状态
+RuntimeState
+
+文件系统
+FileSystem
+
+Git 版本控制
+Git
+
+状态层
+
+记忆层
+
+核心层
+
+自然语言任务
+
+分解任务
+
+生成步骤
+
+执行
+
+调用
+
+读写
+
+保存/恢复
+
+读写
+
+操作
+
+提交
+
+修改
+
+用户
+
+流程编排器
+Orchestrator
+
+规划层
+Planner
+
+任务队列
+TaskQueue
+
+执行层
+Executor
+
+技能库
+Skills
+
+项目记忆
+ProjectMemory
+
+会话记忆
+SessionMemory
+
+代码图谱
+CodeGraph
+
+检查点
+Checkpoint
+
+运行时状态
+RuntimeState
+
+文件系统
+FileSystem
+
+Git 版本控制
+Git
+
+
+豆包
+你的 AI 助手，助力每日工作学习
+二、架构分层详解
+1. 用户交互层
+入口：CLI / TUI / 简单的 Web UI
+职责：接收自然语言任务，展示执行进度，接受用户反馈
+2. 核心层（大脑）
+流程编排器（Orchestrator）
+核心职责：
+接收用户任务
+协调 Planner、Executor、Memory
+处理中断、恢复、重试
+管理检查点
+关键实现：状态机（Planning → Executing → Paused → Completed → Failed）
+规划层（Planner）
+职责：
+理解用户需求
+分析当前项目状态（CodeGraph）
+生成执行计划（Task List）
+处理需求变更（重新规划）
+输入：用户任务 + 项目记忆 + 代码图谱
+输出：结构化任务列表
+执行层（Executor）
+职责：
+从 TaskQueue 取任务
+调用对应的 Skill
+处理执行结果
+记录执行日志
+关键特性：
+单步执行
+失败重试
+自动修复
+技能库（Skills）
+设计：插件化架构，每个 Skill 独立
+核心技能：
+create_file：创建文件
+edit_file：编辑文件
+read_file：读取文件
+search_code：搜索代码
+run_command：运行命令
+git_commit：Git 提交
+git_diff：查看差异
+3. 记忆层（灵魂）
+项目记忆（ProjectMemory）
+存储内容：
+项目概述
+技术栈
+架构决策
+需求历史
+重要文件索引
+实现：SQLite + 向量索引（可选）
+关键：每次任务后自动更新
+会话记忆（SessionMemory）
+存储内容：
+当前会话的对话历史
+执行步骤
+中间结果
+用户反馈
+实现：内存 + 定期持久化
+代码图谱（CodeGraph）
+存储内容：
+文件结构
+函数 / 类定义
+调用关系
+依赖关系
+更新时机：
+项目初始化时扫描
+文件修改后自动更新
+实现：
+使用 syn 库解析 Rust 代码
+使用 tree-sitter 解析多语言
+检查点（Checkpoint）
+核心功能：
+定期保存执行状态
+中断后恢复
+支持回滚
+存储内容：
+当前任务进度
+已执行步骤
+中间结果
+文件系统快照（Git commit）
+实现：
+JSON 状态文件
+Git 分支 / 标签
+文件 diff
+4. 状态层（基础）
+运行时状态（RuntimeState）
+内容：
+当前任务
+执行进度
+技能状态
+缓存
+实现：内存结构体
+文件系统（FileSystem）
+抽象层：
+读取文件
+写入文件
+监听文件变化
+原子写入（避免半写文件）
+Git 版本控制
+核心作用：
+自动提交（每次修改后）
+分支管理（每个任务一个分支）
+差异对比
+回滚
+关键命令：
+git init
+git add .
+git commit -m "..."
+git branch
+git checkout
+git diff
+三、核心流程详解
+1. 正常执行流程
+plaintext
+用户任务
+    ↓
+Orchestrator 接收
+    ↓
+检查是否有未完成的 Checkpoint → 有则恢复
+    ↓
+Planner 分析项目状态 + 记忆 → 生成计划
+    ↓
+TaskQueue 存储任务
+    ↓
+Executor 循环执行：
+    取任务 → 调用 Skill → 记录结果 → 更新记忆 → 保存 Checkpoint
+    ↓
+全部完成 → 总结 → 更新项目记忆
+2. 中断恢复流程
+plaintext
+程序启动
+    ↓
+检查 Checkpoint 目录
+    ↓
+发现未完成的任务
+    ↓
+加载状态：
+    - 已执行步骤
+    - 当前进度
+    - 文件系统状态（Git 恢复）
+    ↓
+询问用户：是否继续？
+    ↓
+继续执行 → 从断点开始
+3. 需求变更流程
+plaintext
+用户："我想改一下..."
+    ↓
+Orchestrator 接收
+    ↓
+分析变更影响：
+    - 哪些文件需要改
+    - 哪些步骤需要重做
+    ↓
+Planner 重新规划
+    ↓
+创建新的 Git 分支
+    ↓
+执行新计划
+    ↓
+完成后：对比差异 → 用户确认 → 合并
+四、核心代码结构示例
+1. 项目目录结构
+plaintext
+your_cli/
+├── src/
+│   ├── main.rs                 # 入口
+│   ├── orchestrator/           # 编排器
+│   │   ├── mod.rs
+│   │   ├── planner.rs          # 规划层
+│   │   └── executor.rs         # 执行层
+│   ├── memory/                 # 记忆层
+│   │   ├── mod.rs
+│   │   ├── project_memory.rs   # 项目记忆
+│   │   ├── session_memory.rs   # 会话记忆
+│   │   ├── code_graph.rs       # 代码图谱
+│   │   └── checkpoint.rs       # 检查点
+│   ├── skills/                 # 技能库
+│   │   ├── mod.rs
+│   │   ├── create_file.rs
+│   │   ├── edit_file.rs
+│   │   ├── read_file.rs
+│   │   └── git.rs
+│   ├── state/                  # 状态层
+│   │   ├── mod.rs
+│   │   ├── runtime_state.rs
+│   │   └── filesystem.rs
+│   └── types/                  # 类型定义
+│       └── mod.rs
+├── checkpoints/                # 检查点存储
+├── .git/                       # Git 仓库
+└── Cargo.toml
+2. 核心类型定义
+rust
+运行
+// src/types/mod.rs
+use serde::{Deserialize, Serialize};
+use std::path::PathBuf;
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct Task {
+    pub id: String,
+    pub description: String,
+    pub skill: String,
+    pub params: serde_json::Value,
+    pub status: TaskStatus,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub enum TaskStatus {
+    Pending,
+    Running,
+    Completed,
+    Failed,
+    Skipped,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct Checkpoint {
+    pub task_id: String,
+    pub current_step: usize,
+    pub completed_tasks: Vec<Task>,
+    pub pending_tasks: Vec<Task>,
+    pub git_commit: String,
+    pub timestamp: String,
+}
+🎯 这个架构的核心优势
+完全单人友好：不需要复杂的分布式系统
+断点续跑：Checkpoint + Git，中断不怕
+需求变更不乱：Git 分支 + 重新规划
+项目记忆清晰：结构化存储，随时回顾
+插件化技能：加新功能不影响核心
+Git 原生集成：版本控制、回滚、对比
+如果你需要，我可以继续帮你
+写 Orchestrator 核心代码
+写 Checkpoint 保存 / 恢复代码
+写 CodeGraph 扫描代码
+写 Git 集成代码
+写 完整的 CLI 入口
+需要我先帮你实现哪个模块？
+
+
+
